@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:user_manager/core/enums/view_state.dart';
-import 'package:user_manager/core/services/database_service.dart';
+import 'package:user_manager/core/services/auth/auth_service.dart';
 import 'package:user_manager/models/logged_user.dart';
 
 part 'login_event.dart';
@@ -26,12 +26,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<UserLoginEvent>((event, emit) async {
       emit(LoginViewStateChangeState(viewState: ViewState.loading));
       try {
-        LoggedUser user = LoggedUser(
-            username: event.userName, password: event.password);
-        await DatabaseService().saveLoggedUser(user: user);
-        var result =await DatabaseService().getLoggedUser();
-        emit(UserLoginState());
-        print(result);
+        // LoggedUser user = LoggedUser(
+        //     username: event.userName, password: event.password, token: '');
+        LoggedUser? loggedUser = await AuthService()
+            .login(userName: event.email, password: event.password);
+        if (loggedUser != null) {
+          emit(UserLoginState());
+        } else {
+          emit(LoginValidationFailState(message: "Invalid user"));
+        }
       } catch (e) {
         emit(LoginViewStateChangeState(viewState: ViewState.error));
       }

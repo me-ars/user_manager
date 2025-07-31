@@ -63,8 +63,32 @@ class NetworkService {
       throw Exception('Failed to delete data: ${response.statusCode}');
     }
   }
-}
 
+  Future<Map<String, dynamic>> postData({
+    required String endpoint,
+    required Map<String, dynamic> body,
+  }) async {
+    final Uri url = Uri.parse('$_baseUrl/$endpoint');
+    final response = await http.post(
+      url,
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+
+    final responseBody = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return responseBody;
+    } else {
+      // return error body along with status code
+      return {
+        "error": true,
+        "statusCode": response.statusCode,
+        "message": responseBody["error"] ?? "Unknown error",
+      };
+    }
+  }
+}
 // x-api-key: reqres-free-v1
 // reqres-free-v1
 // https://reqres.in/api/users

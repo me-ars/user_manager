@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
 }
 
 //text controller initialization  for user inputs
-final TextEditingController userNameController = TextEditingController();
+final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 
 class _LoginScreenView extends StatefulWidget {
@@ -33,18 +33,18 @@ class _LoginScreenView extends StatefulWidget {
 
 class _LoginScreenViewState extends State<_LoginScreenView> {
   String? _validateCredentials({
-    required String userName,
+    required String email,
     required String password,
   }) {
-    if (userName.isEmpty) return "Enter username";
+    if (email.isEmpty) return "Enter email";
     if (password.isEmpty) return "Enter password";
     bool isValidPassword =
     LoginValueValidator.isValidPassword(password: password);
     bool isValidUsername =
-    LoginValueValidator.isValidUsername(username: userName);
+    LoginValueValidator.isValidEmail(email: email);
 
     if (!isValidUsername) {
-      return "Invalid username should contain 6 characters without space ";
+      return "Invalid email ";
     } else if (!isValidPassword) {
       return "Invalid password should contain 6 characters without space ";
     }
@@ -117,9 +117,9 @@ class _LoginScreenViewState extends State<_LoginScreenView> {
                           isPassword: false,
                           height: size.height * 0.1,
                           width: size.width * 0.9,
-                          controller: userNameController,
+                          controller: emailController,
                           labelText: "Username",
-                          maxLength: 6,
+                          maxLength: 15,
                         ),
                         CustomTextField(
                           isPassword: true,
@@ -135,16 +135,15 @@ class _LoginScreenViewState extends State<_LoginScreenView> {
                           width: size.width * 0.9,
                           buttonText: "Login",
                           onTap: () {
-                            String? validationMessage =
-                            _validateCredentials(
-                              userName: userNameController.text.trim(),
+                            String? validationMessage =_validateCredentials(
+                              email: emailController.text.trim(),
                               password: passwordController.text.trim(),
                             );
                             if (validationMessage == null) {
                               context
                                   .read<LoginBloc>()
                                   .add(UserLoginEvent(
-                                userName: userNameController.text,
+                                email:  emailController.text,
                                 password: passwordController.text,
                               ));
                             } else {

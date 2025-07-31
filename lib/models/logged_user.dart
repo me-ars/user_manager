@@ -4,9 +4,9 @@ part 'logged_user.g.dart';
 
 @JsonSerializable()
 class LoggedUser {
-  final String username, password;
+  final String username, password,token;
 final String? image;
-  LoggedUser( {required this.username, required this.password,this.image,});
+  LoggedUser(  {required this.token,required this.username, required this.password,this.image,});
 
   factory LoggedUser.fromJson(Map<String, dynamic> json) => _$LoggedUserFromJson(json);
 

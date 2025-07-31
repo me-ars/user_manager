@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:user_manager/core/services/auth/auth_service.dart';
 import 'package:user_manager/core/services/database_service.dart';
 import 'package:user_manager/models/logged_user.dart';
 
@@ -16,8 +15,7 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final NetworkService _networkService = NetworkService();
-  final DatabaseService _databaseService = DatabaseService();
-
+  final AuthService _authService = AuthService();
   List<UserModel> _users = [];
   LoggedUser? _currentUser;
 
@@ -42,8 +40,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       _users = usersResponse
           .map<UserModel>((json) => UserModel.fromJson(json))
           .toList();
-
-      _currentUser = LoggedUser(username: "Anandu", password: "hvhA");
+      LoggedUser? user =  DatabaseService().getLoggedUser();
+      _currentUser =
+          LoggedUser(username: user!.username, password: user.username, token: user.token);
 
       emit(HomeInitialFetchSuccessState(
           users: _users, currentUser: _currentUser!));
@@ -75,11 +74,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       DeleteUserEvent event, Emitter<HomeState> emit) async {
     emit(HomeViewStateChangeState(viewState: ViewState.loading));
     try {
-      //todo
-      // await _networkService.deleteData(
-      //     endpoint: "users", id: event.id.toString());
+      await _networkService.deleteData(
+          endpoint: "users", id: event.id.toString());
       _users.removeWhere((user) => user.id == event.id);
-
       emit(UserUpdateSuccessState(users: _users, currentUser: _currentUser!));
     } catch (e) {
       emit(HomeViewStateChangeState(viewState: ViewState.error));
@@ -101,7 +98,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> _logoutUser(UserLogoutEvent event, Emitter<HomeState> emit) async{
     emit(HomeViewStateChangeState(viewState: ViewState.loading));
     try {
-      await _databaseService.clearLoggedUser();
+      await _authService.logout();
       emit(UserLogoutState());
     } catch (e) {
       emit(HomeViewStateChangeState(viewState: ViewState.error));
