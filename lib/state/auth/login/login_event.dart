@@ -12,10 +12,10 @@ class LoginScreenStateChangeEvent extends LoginEvent {
 }
 
 class UserLoginEvent extends LoginEvent {
-  final String userName;
+  final String email;
   final String password;
 
-  UserLoginEvent({required this.password, required this.userName});
+  UserLoginEvent({required this.password, required this.email});
 }
 
 class LoginValidationFailEvent extends LoginEvent {
