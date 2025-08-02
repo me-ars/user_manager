@@ -36,13 +36,14 @@ class _LoginScreenViewState extends State<_LoginScreenView> {
     required String email,
     required String password,
   }) {
+    print(email);
     if (email.isEmpty) return "Enter email";
     if (password.isEmpty) return "Enter password";
     bool isValidPassword =
     LoginValueValidator.isValidPassword(password: password);
     bool isValidUsername =
     LoginValueValidator.isValidEmail(email: email);
-
+print(isValidUsername);
     if (!isValidUsername) {
       return "Invalid email ";
     } else if (!isValidPassword) {
@@ -119,7 +120,7 @@ class _LoginScreenViewState extends State<_LoginScreenView> {
                           width: size.width * 0.9,
                           controller: emailController,
                           labelText: "Username",
-                          maxLength: 15,
+                          maxLength: 20,
                         ),
                         CustomTextField(
                           isPassword: true,
@@ -127,7 +128,7 @@ class _LoginScreenViewState extends State<_LoginScreenView> {
                           width: size.width * 0.9,
                           controller: passwordController,
                           labelText: "Password",
-                          maxLength: 6,
+                          maxLength: 10,
                         ),
                         (!isLoading)
                             ? CustomButton(
