@@ -68,6 +68,7 @@ class NetworkService {
     required String endpoint,
     required Map<String, dynamic> body,
   }) async {
+    print(body);
     final Uri url = Uri.parse('$_baseUrl/$endpoint');
     final response = await http.post(
       url,

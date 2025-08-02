@@ -19,7 +19,6 @@ class AuthService {
         endpoint: 'login',
         body: loginMap,
       );
-
       if (response.containsKey("token")) {
         final user = LoggedUser(
           username: userName,
